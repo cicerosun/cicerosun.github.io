@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>WebSocket测试</title>
+    <style>
+      .messages {
+        border: 1px solid black;
+        width: 300px;
+        height: 200px;
+        overflow: auto;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>WebSocket测试</h1>
+    <div id="messages1" class="messages"></div>
+    <div id="messages2" class="messages"></div>
+    <script>
+      function createWebSocketConnection(url, messagesDiv) {
+        const socket = new WebSocket(url);
+
+        function addMessage(message) {
+          const messageElement = document.createElement('div');
+          messageElement.textContent = message;
+          messagesDiv.appendChild(messageElement);
+        }
+
+        // 监听连接事件
+        socket.addEventListener('open', (event) => {
+          addMessage('WebSocket连接已建立');
+          
+          // 发送消息到后端服务器
+          socket.send('Hello, backend server!');
+        });
+
+        // 监听接收消息事件
+        socket.addEventListener('message', (event) => {
+          addMessage('收到消息：' + event.data);
+          
+          // 关闭WebSocket连接
+          socket.close();
+        });
+
+        // 监听关闭连接事件
+        socket.addEventListener('close', (event) => {
+          addMessage('WebSocket连接已关闭');
+        });
+
+        // 监听错误事件
+        socket.addEventListener('error', (event) => {
+          addMessage('WebSocket连接发生错误');
+        });
+
+        return socket;
+      }
+
+      const messagesDiv1 = document.getElementById('messages1');
+      const messagesDiv2 = document.getElementById('messages2');
+      
+      // 替换为您的后端服务器的WSS协议URL
+      const url1 = 'wss://gmve-qa2.gamematrix.qq.com/inst/conn';
+      const url2 = 'wss://gmve-qa2.gamematrix.qq.com/inst/conn';
+
+      // 创建两个不同的WebSocket连接，并分别展示结果
+      const socket1 = createWebSocketConnection(url1, messagesDiv1);
+      const socket2 = createWebSocketConnection(url2, messagesDiv2);
+    </script>
+  </body>
+</html>
